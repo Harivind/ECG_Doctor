@@ -12,7 +12,6 @@ int length;
 class ChatScreen extends StatefulWidget {
   static String id = "chatScreen";
   final int patientIndex;
-
   const ChatScreen({@required this.patientIndex});
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -43,7 +42,10 @@ class _ChatScreenState extends State<ChatScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              MessagesStream(),
+              MessagesStream(
+                patientID: Provider.of<Data>(context)
+                    .patients[widget.patientIndex]['patientID'],
+              ),
               Container(
                 decoration: kMessageContainerDecoration,
                 child: Row(
@@ -64,7 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                         _firestore
                             .collection(
-                                '/messages/kGkkPx67iYS9Eiy0gWxcpLfZ9Fx1/1234')
+                                '/messages/${Provider.of<Data>(context).currentUser.uid}/${Provider.of<Data>(context).patients[widget.patientIndex]['patientID']}')
                             .add(
                           {
                             'index': length,
@@ -72,6 +74,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             'sender': Provider.of<Data>(context, listen: false)
                                 .currentUser
                                 .displayName,
+                            'time': DateTime.now().toString()
                           },
                         );
                       },
@@ -92,6 +95,9 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class MessagesStream extends StatelessWidget {
+  final String patientID;
+
+  const MessagesStream({@required this.patientID});
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -106,15 +112,17 @@ class MessagesStream extends StatelessWidget {
         final messages = snapshot.data.documents;
         messages.sort((a, b) => b.data['index'] - a.data['index']);
         length = messages.length;
+        print(DateTime.now().hour);
         List<MessageBubble> messageBubbles = [];
         for (var message in messages) {
           final messageText = message.data['text'];
           final messageSender = message.data['sender'];
+          final messageTime = message.data['time'];
 
           final currenUser = Provider.of<Data>(context).currentUser.displayName;
 
           final messageBubble = MessageBubble(
-            sender: messageSender,
+            time: messageTime,
             text: messageText,
             isMe: currenUser == messageSender,
           );
@@ -132,7 +140,8 @@ class MessagesStream extends StatelessWidget {
         );
       },
       stream: _firestore
-          .collection("/messages/kGkkPx67iYS9Eiy0gWxcpLfZ9Fx1/1234")
+          .collection(
+              "/messages/${Provider.of<Data>(context).currentUser.uid}/$patientID")
           .snapshots(),
     );
   }
