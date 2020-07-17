@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doctor/models/data.dart';
+import 'package:doctor/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -73,7 +74,18 @@ class PatientScreen extends StatelessWidget {
                   Icons.chat,
                   color: Colors.black,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return ChatScreen(
+                          patientIndex: index,
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
             ],
           ),

@@ -60,3 +60,24 @@ const greetingSubtitleStyle = TextStyle(
     )
   ],
 );
+
+const kSendButtonTextStyle = TextStyle(
+  color: Color(0xFF3F51B5),
+  fontWeight: FontWeight.bold,
+  fontSize: 18.0,
+);
+
+const kMessageTextFieldDecoration = InputDecoration(
+  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+  hintText: 'Type your message here...',
+  border: InputBorder.none,
+);
+
+const kMessageContainerDecoration = BoxDecoration(
+  border: Border(
+    top: BorderSide(
+      color: Color(0xFF3F51B5),
+      width: 2.0,
+    ),
+  ),
+);
