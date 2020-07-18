@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doctor/models/data.dart';
 import 'package:doctor/screens/chat_screen.dart';
+import 'package:doctor/screens/notes_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -65,7 +66,15 @@ class PatientScreen extends StatelessWidget {
                 color: Colors.grey,
               ),
               FlatButton(
-                onPressed: () {},
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => NotesScreen(
+                      patientID: Provider.of<Data>(context).patients[index]
+                          ['patientID'],
+                    ),
+                  );
+                },
                 child: Text('View Notes'),
                 color: Colors.grey,
               ),
