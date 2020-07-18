@@ -66,7 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                         _firestore
                             .collection(
-                                '/messages/${Provider.of<Data>(context).currentUser.uid}/${Provider.of<Data>(context).patients[widget.patientIndex]['patientID']}')
+                                '/messages/${Provider.of<Data>(context, listen: false).currentUser.uid}/${Provider.of<Data>(context, listen: false).patients[widget.patientIndex]['patientID']}')
                             .add(
                           {
                             'index': length,
@@ -112,7 +112,6 @@ class MessagesStream extends StatelessWidget {
         final messages = snapshot.data.documents;
         messages.sort((a, b) => b.data['index'] - a.data['index']);
         length = messages.length;
-        print(DateTime.now().hour);
         List<MessageBubble> messageBubbles = [];
         for (var message in messages) {
           final messageText = message.data['text'];

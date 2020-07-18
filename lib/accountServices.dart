@@ -11,10 +11,11 @@ import 'package:provider/provider.dart';
 class AccountService {
   FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<dynamic> login(
-      {@required String email,
-      @required String pass,
-      @required BuildContext context}) async {
+  Future<dynamic> login({
+    @required String email,
+    @required String pass,
+    @required BuildContext context,
+  }) async {
     try {
       final user = await _auth.signInWithEmailAndPassword(
         email: email,

@@ -9,7 +9,6 @@ class MessageBubble extends StatelessWidget {
   const MessageBubble({this.text, this.isMe, this.time});
   @override
   Widget build(BuildContext context) {
-    print(this.time);
     return Padding(
       padding: EdgeInsets.all(10.0),
       child: Column(
