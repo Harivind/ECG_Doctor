@@ -67,7 +67,8 @@ class PatientScreen extends StatelessWidget {
               ),
               FlatButton(
                 onPressed: () {
-                  showModalBottomSheet(
+                  showModalBottomSheet<dynamic>(
+                    isScrollControlled: true,
                     context: context,
                     builder: (context) => NotesScreen(
                       patientID: Provider.of<Data>(context).patients[index]

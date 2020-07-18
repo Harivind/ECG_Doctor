@@ -23,6 +23,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return ChangeNotifierProvider(
       create: (BuildContext context) {},
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: Icon(
+            Icons.person_add,
+            color: Colors.black,
+          ),
+        ),
         body: Column(
           children: [
             Stack(
