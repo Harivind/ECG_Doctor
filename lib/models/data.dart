@@ -15,16 +15,12 @@ class Data extends ChangeNotifier {
     return UnmodifiableListView(_patients);
   }
 
-  Future<void> getPatients(String docID) async {
-    final QuerySnapshot result = await Firestore.instance
+  Future<void> getPatients() async {
+    await Firestore.instance
         .collection('patients')
-        .where('doctorID', arrayContains: currentUser.uid)
-        .getDocuments();
-
-    _patients = result.documents;
+        .getDocuments()
+        .then((value) => _patients = value.documents);
     notifyListeners();
-
-    print(result.documents);
   }
 
   void addCurrentUser(FirebaseUser user) {

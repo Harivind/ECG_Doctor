@@ -23,7 +23,7 @@ class AccountService {
       );
       if (user != null) {
         Provider.of<Data>(context, listen: false).addCurrentUser(user.user);
-        Provider.of<Data>(context, listen: false).getPatients(user.user.uid);
+        Provider.of<Data>(context, listen: false).getPatients();
         Navigator.pushNamedAndRemoveUntil(
           context,
           HomeScreen.id,

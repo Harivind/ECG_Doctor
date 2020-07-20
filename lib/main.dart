@@ -1,4 +1,5 @@
 import 'package:doctor/models/data.dart';
+import 'package:doctor/screens/add_patient.dart';
 import 'package:doctor/screens/home_screen.dart';
 import 'package:doctor/screens/welcome_screen.dart';
 import 'package:doctor/screens/login_screen.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
           LoginScreen.id: (context) => LoginScreen(),
           RegistrationScreen.id: (context) => RegistrationScreen(),
           HomeScreen.id: (context) => HomeScreen(),
+          AddPatient.id: (context) => AddPatient(),
         },
       ),
     );

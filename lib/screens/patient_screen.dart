@@ -53,7 +53,7 @@ class PatientScreen extends StatelessWidget {
                 'Patient ID: ${Provider.of<Data>(context).patients[index]['patientID']}',
               ),
               Text(
-                'Status: ${Provider.of<Data>(context).patients[index]['Status']}',
+                'Status: ${Provider.of<Data>(context).patients[index]['status']}',
               ),
               FlatButton(
                 onPressed: () {},

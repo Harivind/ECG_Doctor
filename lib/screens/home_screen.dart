@@ -1,30 +1,24 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doctor/constants.dart';
 import 'package:doctor/models/data.dart';
+import 'package:doctor/screens/add_patient.dart';
 import 'package:doctor/screens/patient_screen.dart';
 import 'package:doctor/screens/welcome_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   static String id = "homeScreen";
-  final FirebaseUser loggedInUser;
 
-  HomeScreen({this.loggedInUser});
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  var selectedItem = 0;
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (BuildContext context) {},
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, AddPatient.id);
+          },
           child: Icon(
             Icons.person_add,
             color: Colors.black,
@@ -96,9 +90,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             TextField(),
-            Text(
-              'Your Patients',
-              textAlign: TextAlign.center,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Your Patients',
+                  textAlign: TextAlign.center,
+                ),
+                IconButton(
+                  icon: Icon(Icons.refresh),
+                  onPressed: () {
+                    Provider.of<Data>(context, listen: false).getPatients();
+                  },
+                )
+              ],
             ),
             Provider.of<Data>(context).patientCount == 0
                 ? Text('Please Add Patients')
@@ -143,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             trailing: Icon(
                               Icons.add_alert,
                               color: Provider.of<Data>(context).patients[index]
-                                          ['Status'] ==
+                                          ['status'] ==
                                       'good'
                                   ? Colors.grey
                                   : Colors.red,
@@ -156,31 +161,46 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: selectedItem,
-          items: [
-            BottomNavigationBarItem(
-              title: Text('Home'),
-              icon: Icon(Icons.home),
-            ),
-            BottomNavigationBarItem(
-              title: Text('Account'),
-              icon: Icon(Icons.person_outline),
-            ),
-          ],
-          elevation: 0,
-          onTap: (value) {
-            if (value == 1) {
-              Navigator.pushNamedAndRemoveUntil(
-                  context, WelcomeScreen.id, (route) => false);
-            }
-            setState(() {
-              selectedItem = value;
-              print(selectedItem);
-            });
-          },
-        ),
+        bottomNavigationBar: CusstomBottomNavigationBar(),
       ),
+    );
+  }
+}
+
+class CusstomBottomNavigationBar extends StatefulWidget {
+  @override
+  _CusstomBottomNavigationBarState createState() =>
+      _CusstomBottomNavigationBarState();
+}
+
+class _CusstomBottomNavigationBarState
+    extends State<CusstomBottomNavigationBar> {
+  var selectedItem = 0;
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      currentIndex: selectedItem,
+      items: [
+        BottomNavigationBarItem(
+          title: Text('Home'),
+          icon: Icon(Icons.home),
+        ),
+        BottomNavigationBarItem(
+          title: Text('Account'),
+          icon: Icon(Icons.person_outline),
+        ),
+      ],
+      elevation: 0,
+      onTap: (value) {
+        if (value == 1) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, WelcomeScreen.id, (route) => false);
+        }
+        setState(() {
+          selectedItem = value;
+          print(selectedItem);
+        });
+      },
     );
   }
 }
