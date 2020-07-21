@@ -116,59 +116,80 @@ class HomeScreen extends StatelessWidget {
                         .collection("patients")
                         .where(
                           'doctorID',
-                          isEqualTo:
+                          arrayContains:
                               (Provider.of<Data>(context).loggedIntUser.uid),
                         )
                         .snapshots(),
                     builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            semanticsLabel: "Loading Patients",
+                          ),
+                        );
+                      }
+
+                      Provider.of<Data>(context)
+                          .setPatients(snapshot.data.documents);
+
                       return Expanded(
                         child: ListView.builder(
                           itemBuilder: (context, index) {
-                            return Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                              elevation: 2.5,
-                              child: ListTile(
-                                contentPadding:
-                                    EdgeInsets.fromLTRB(16, 8, 16, 8),
-                                leading: Hero(
-                                  tag: 'photo',
-                                  child: CachedNetworkImage(
-                                    placeholder: (context, url) => CircleAvatar(
-                                      child: Text(
-                                        Provider.of<Data>(context)
-                                            .patients[index]['name'][0],
-                                      ),
+                            return Stack(
+                              children: [
+                                Provider.of<Data>(context).patients[index]
+                                            ['status'] !=
+                                        'good'
+                                    ? LinearProgressIndicator(
+                                        minHeight: 98,
+                                        backgroundColor: Colors.white,
+                                      )
+                                    : Container(),
+                                Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
                                     ),
-                                    imageUrl: Provider.of<Data>(context)
-                                        .patients[index]['photoURL'],
+                                  ),
+                                  elevation: 2.5,
+                                  child: ListTile(
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(16, 8, 16, 8),
+                                    leading: CachedNetworkImage(
+                                      placeholder: (context, url) =>
+                                          CircleAvatar(
+                                        child: Text(
+                                          Provider.of<Data>(context)
+                                              .patients[index]['name'][0],
+                                        ),
+                                      ),
+                                      imageUrl: Provider.of<Data>(context)
+                                          .patients[index]['photoURL'],
+                                    ),
+                                    title: Text(
+                                      Provider.of<Data>(context).patients[index]
+                                          ['name'],
+                                    ),
+                                    subtitle: Text(
+                                        "ID: ${Provider.of<Data>(context).patients[index]['patientID']}"),
+                                    onTap: () {
+                                      Navigator.push(context, MaterialPageRoute(
+                                        builder: (context) {
+                                          return PatientScreen(index: index);
+                                        },
+                                      ));
+                                    },
+                                    trailing: Icon(
+                                      Icons.add_alert,
+                                      color: Provider.of<Data>(context)
+                                                  .patients[index]['status'] ==
+                                              'good'
+                                          ? Colors.grey
+                                          : Colors.red,
+                                    ),
                                   ),
                                 ),
-                                title: Text(
-                                  Provider.of<Data>(context).patients[index]
-                                      ['name'],
-                                ),
-                                subtitle: Text(
-                                    "ID: ${Provider.of<Data>(context).patients[index]['patientID']}"),
-                                onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) {
-                                      return PatientScreen(index: index);
-                                    },
-                                  ));
-                                },
-                                trailing: Icon(
-                                  Icons.add_alert,
-                                  color: Provider.of<Data>(context)
-                                              .patients[index]['status'] ==
-                                          'good'
-                                      ? Colors.grey
-                                      : Colors.red,
-                                ),
-                              ),
+                              ],
                             );
                           },
                           itemCount: Provider.of<Data>(context).patientCount,

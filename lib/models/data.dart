@@ -1,18 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'dart:collection';
 
 class Data extends ChangeNotifier {
   FirebaseUser currentUser;
-  List _patients = [];
+  List patients = [];
 
   int get patientCount {
-    return _patients.length;
+    return patients.length;
   }
 
-  UnmodifiableListView<dynamic> get patients {
-    return UnmodifiableListView(_patients);
+  // UnmodifiableListView<dynamic> get patients {
+  //   return UnmodifiableListView(patients);
+  // }
+
+  void setPatients(patients) {
+    print(patients);
+    this.patients = patients;
   }
 
   Future<void> getPatients() async {
@@ -20,7 +24,7 @@ class Data extends ChangeNotifier {
         .collection('patients')
         .where('doctorID', arrayContains: currentUser.uid)
         .getDocuments()
-        .then((value) => _patients = value.documents);
+        .then((value) => patients = value.documents);
     notifyListeners();
   }
 
