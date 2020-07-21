@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doctor/models/data.dart';
 import 'package:doctor/screens/chat_screen.dart';
 import 'package:doctor/screens/notes_screen.dart';
+import 'package:doctor/widgets/resuable_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class PatientScreen extends StatelessWidget {
@@ -18,19 +20,11 @@ class PatientScreen extends StatelessWidget {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Hero(
                 tag: 'photo',
                 child: Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 10,
-                        spreadRadius: -6,
-                        color: ThemeData().primaryColor,
-                      ),
-                    ],
-                  ),
                   height: 250,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
@@ -64,6 +58,82 @@ class PatientScreen extends StatelessWidget {
                 onPressed: () {},
                 child: Text('View Analysis'),
                 color: Colors.grey,
+              ),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ReusableCard(
+                        onPress: () {},
+                        cardChild: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/ecg.svg',
+                              semanticsLabel: 'Acme Logo',
+                              height: 50,
+                            ),
+                            Text('View ECG Data'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ReusableCard(
+                        onPress: () {},
+                        cardChild: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/ecg.svg',
+                              semanticsLabel: 'Acme Logo',
+                              // height: 200,
+                            ),
+                            Text('View Summary'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ReusableCard(
+                        onPress: () {},
+                        cardChild: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/ecg.svg',
+                              semanticsLabel: 'Acme Logo',
+                              // height: 200,
+                            ),
+                            Text('ECG Data'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ReusableCard(
+                        onPress: () {},
+                        cardChild: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/ecg.svg',
+                              semanticsLabel: 'Acme Logo',
+                              // height: 200,
+                            ),
+                            Text('ECG Data'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               FlatButton(
                 onPressed: () {

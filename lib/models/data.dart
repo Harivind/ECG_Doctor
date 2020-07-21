@@ -18,6 +18,7 @@ class Data extends ChangeNotifier {
   Future<void> getPatients() async {
     await Firestore.instance
         .collection('patients')
+        .where('doctorID', arrayContains: currentUser.uid)
         .getDocuments()
         .then((value) => _patients = value.documents);
     notifyListeners();

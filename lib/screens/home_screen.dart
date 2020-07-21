@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor/constants.dart';
 import 'package:doctor/models/data.dart';
 import 'package:doctor/screens/add_patient.dart';
 import 'package:doctor/screens/patient_screen.dart';
-import 'package:doctor/screens/welcome_screen.dart';
+import 'package:doctor/widgets/custom_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+final _firestore = Firestore.instance;
 
 class HomeScreen extends StatelessWidget {
   static String id = "homeScreen";
@@ -16,6 +19,7 @@ class HomeScreen extends StatelessWidget {
       create: (BuildContext context) {},
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.pink[200],
           onPressed: () {
             Navigator.pushNamed(context, AddPatient.id);
           },
@@ -23,6 +27,7 @@ class HomeScreen extends StatelessWidget {
             Icons.person_add,
             color: Colors.black,
           ),
+          tooltip: "Add a Patient",
         ),
         body: Column(
           children: [
@@ -89,7 +94,6 @@ class HomeScreen extends StatelessWidget {
                 )
               ],
             ),
-            TextField(),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -107,100 +111,75 @@ class HomeScreen extends StatelessWidget {
             ),
             Provider.of<Data>(context).patientCount == 0
                 ? Text('Please Add Patients')
-                : Expanded(
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                          elevation: 2.5,
-                          child: ListTile(
-                            contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                            leading: Hero(
-                              tag: 'photo',
-                              child: CachedNetworkImage(
-                                placeholder: (context, url) => CircleAvatar(
-                                  child: Text(
-                                    Provider.of<Data>(context).patients[index]
-                                        ['name'][0],
+                : StreamBuilder<QuerySnapshot>(
+                    stream: _firestore
+                        .collection("patients")
+                        .where(
+                          'doctorID',
+                          isEqualTo:
+                              (Provider.of<Data>(context).loggedIntUser.uid),
+                        )
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      return Expanded(
+                        child: ListView.builder(
+                          itemBuilder: (context, index) {
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+                              elevation: 2.5,
+                              child: ListTile(
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(16, 8, 16, 8),
+                                leading: Hero(
+                                  tag: 'photo',
+                                  child: CachedNetworkImage(
+                                    placeholder: (context, url) => CircleAvatar(
+                                      child: Text(
+                                        Provider.of<Data>(context)
+                                            .patients[index]['name'][0],
+                                      ),
+                                    ),
+                                    imageUrl: Provider.of<Data>(context)
+                                        .patients[index]['photoURL'],
                                   ),
                                 ),
-                                imageUrl: Provider.of<Data>(context)
-                                    .patients[index]['photoURL'],
-                              ),
-                            ),
-                            title: Text(
-                              Provider.of<Data>(context).patients[index]
-                                  ['name'],
-                            ),
-                            subtitle: Text(
-                                "ID: ${Provider.of<Data>(context).patients[index]['patientID']}"),
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(
-                                builder: (context) {
-                                  return PatientScreen(index: index);
+                                title: Text(
+                                  Provider.of<Data>(context).patients[index]
+                                      ['name'],
+                                ),
+                                subtitle: Text(
+                                    "ID: ${Provider.of<Data>(context).patients[index]['patientID']}"),
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) {
+                                      return PatientScreen(index: index);
+                                    },
+                                  ));
                                 },
-                              ));
-                            },
-                            trailing: Icon(
-                              Icons.add_alert,
-                              color: Provider.of<Data>(context).patients[index]
-                                          ['status'] ==
-                                      'good'
-                                  ? Colors.grey
-                                  : Colors.red,
-                            ),
-                          ),
-                        );
-                      },
-                      itemCount: Provider.of<Data>(context).patientCount,
-                    ),
+                                trailing: Icon(
+                                  Icons.add_alert,
+                                  color: Provider.of<Data>(context)
+                                              .patients[index]['status'] ==
+                                          'good'
+                                      ? Colors.grey
+                                      : Colors.red,
+                                ),
+                              ),
+                            );
+                          },
+                          itemCount: Provider.of<Data>(context).patientCount,
+                        ),
+                      );
+                    },
                   ),
           ],
         ),
-        bottomNavigationBar: CusstomBottomNavigationBar(),
+        bottomNavigationBar: CustomBottomNavigationBar(),
       ),
-    );
-  }
-}
-
-class CusstomBottomNavigationBar extends StatefulWidget {
-  @override
-  _CusstomBottomNavigationBarState createState() =>
-      _CusstomBottomNavigationBarState();
-}
-
-class _CusstomBottomNavigationBarState
-    extends State<CusstomBottomNavigationBar> {
-  var selectedItem = 0;
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: selectedItem,
-      items: [
-        BottomNavigationBarItem(
-          title: Text('Home'),
-          icon: Icon(Icons.home),
-        ),
-        BottomNavigationBarItem(
-          title: Text('Account'),
-          icon: Icon(Icons.person_outline),
-        ),
-      ],
-      elevation: 0,
-      onTap: (value) {
-        if (value == 1) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, WelcomeScreen.id, (route) => false);
-        }
-        setState(() {
-          selectedItem = value;
-          print(selectedItem);
-        });
-      },
     );
   }
 }
