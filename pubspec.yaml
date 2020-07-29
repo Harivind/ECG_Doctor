@@ -35,7 +35,9 @@ dependencies:
   animated_background: ^1.0.5
   provider: ^4.3.0
   flutter_svg: ^0.18.0
-   
+  fl_chart: ^0.10.1
+  move_to_background: ^1.0.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

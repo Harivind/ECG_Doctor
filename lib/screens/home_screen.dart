@@ -112,14 +112,7 @@ class HomeScreen extends StatelessWidget {
             Provider.of<Data>(context).patientCount == 0
                 ? Text('Please Add Patients')
                 : StreamBuilder<QuerySnapshot>(
-                    stream: _firestore
-                        .collection("patients")
-                        .where(
-                          'doctorID',
-                          arrayContains:
-                              (Provider.of<Data>(context).loggedIntUser.uid),
-                        )
-                        .snapshots(),
+                    stream: _firestore.collection("patients").snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
                         return Center(
@@ -139,7 +132,7 @@ class HomeScreen extends StatelessWidget {
                               children: [
                                 Provider.of<Data>(context).patients[index]
                                             ['status'] !=
-                                        'good'
+                                        'Normal'
                                     ? LinearProgressIndicator(
                                         minHeight: 98,
                                         backgroundColor: Colors.white,
@@ -155,17 +148,25 @@ class HomeScreen extends StatelessWidget {
                                   child: ListTile(
                                     contentPadding:
                                         EdgeInsets.fromLTRB(16, 8, 16, 8),
-                                    leading: CachedNetworkImage(
-                                      placeholder: (context, url) =>
-                                          CircleAvatar(
-                                        child: Text(
-                                          Provider.of<Data>(context)
-                                              .patients[index]['name'][0],
-                                        ),
-                                      ),
-                                      imageUrl: Provider.of<Data>(context)
-                                          .patients[index]['photoURL'],
-                                    ),
+                                    leading: Provider.of<Data>(context)
+                                                .patients[index]['photoURL'] !=
+                                            null
+                                        ? CachedNetworkImage(
+                                            placeholder: (context, url) =>
+                                                CircleAvatar(
+                                              child: Text(
+                                                Provider.of<Data>(context)
+                                                    .patients[index]['name'][0],
+                                              ),
+                                            ),
+                                            imageUrl: Provider.of<Data>(context)
+                                                .patients[index]['photoURL'],
+                                          )
+                                        : Icon(
+                                            Icons.person,
+                                            size: 45,
+                                            color: Colors.black,
+                                          ),
                                     title: Text(
                                       Provider.of<Data>(context).patients[index]
                                           ['name'],
@@ -183,7 +184,7 @@ class HomeScreen extends StatelessWidget {
                                       Icons.add_alert,
                                       color: Provider.of<Data>(context)
                                                   .patients[index]['status'] ==
-                                              'good'
+                                              'Normal'
                                           ? Colors.grey
                                           : Colors.red,
                                     ),

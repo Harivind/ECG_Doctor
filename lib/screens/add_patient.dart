@@ -168,6 +168,26 @@ class _SheetButtonState extends State<SheetButton> {
                   .collection('patients')
                   .where('patientID', isEqualTo: patID)
                   .getDocuments();
+              bool alreadyRequested;
+              await _firestore
+                  .collection('requests')
+                  .where(
+                    'patientID',
+                    isEqualTo: patID,
+                  )
+                  .where('doctorID',
+                      isEqualTo: Provider.of<Data>(context, listen: false)
+                          .loggedIntUser
+                          .uid)
+                  .getDocuments()
+                  .then((value) {
+                if (value.documents.isEmpty) {
+                  alreadyRequested = false;
+                } else {
+                  print(value.documents);
+                  alreadyRequested = true;
+                }
+              });
 
               if (result.documents.length == 0) {
                 Scaffold.of(context).showSnackBar(
@@ -181,20 +201,7 @@ class _SheetButtonState extends State<SheetButton> {
                     elevation: 5.0,
                   ),
                 );
-              } else if (_firestore
-                      .collection('requests')
-                      .where(
-                        'patientID',
-                        isEqualTo: patID,
-                      )
-                      .where('doctorID',
-                          isEqualTo: Provider.of<Data>(context, listen: false)
-                              .loggedIntUser
-                              .uid)
-                      .getDocuments() !=
-                  null) {
-                print('object');
-                error = true;
+              } else if (alreadyRequested) {
                 Scaffold.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Access already requested'),
@@ -209,6 +216,9 @@ class _SheetButtonState extends State<SheetButton> {
               } else {
                 await _firestore.collection('requests').add(
                   {
+                    'doctorName': Provider.of<Data>(context, listen: false)
+                        .loggedIntUser
+                        .displayName,
                     'patientID': patID,
                     'doctorID': Provider.of<Data>(context, listen: false)
                         .loggedIntUser
@@ -221,7 +231,7 @@ class _SheetButtonState extends State<SheetButton> {
                   error = false;
                 });
               }
-              await Future.delayed(Duration(seconds: 3));
+              await Future.delayed(Duration(seconds: 1));
               setState(() {
                 checkingPatient = false;
                 success = false;

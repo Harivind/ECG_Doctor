@@ -17,6 +17,17 @@ class AccountService {
     @required BuildContext context,
   }) async {
     try {
+      final QuerySnapshot result = await Firestore.instance
+          .collection('doctors')
+          .where('email', isEqualTo: email)
+          .getDocuments();
+
+      final List<DocumentSnapshot> documents = result.documents;
+      print("length" + documents.length.toString());
+      if (documents.length == 0) {
+        throw "Invalid Credentials";
+      }
+
       final user = await _auth.signInWithEmailAndPassword(
         email: email,
         password: pass,
@@ -78,7 +89,8 @@ class AccountService {
           'name': name,
           'photoUrl': imageURL,
           'email': email,
-          'patients': [],
+          'patients': {},
+          'uid': newUser.user.uid
         });
         var userUpdateInfo = UserUpdateInfo();
         userUpdateInfo.photoUrl = imageURL;

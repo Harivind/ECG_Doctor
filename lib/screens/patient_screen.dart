@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doctor/models/data.dart';
 import 'package:doctor/screens/chat_screen.dart';
+import 'package:doctor/screens/ecg_screen.dart';
 import 'package:doctor/screens/notes_screen.dart';
+import 'package:doctor/screens/summary_screen.dart';
 import 'package:doctor/widgets/resuable_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,7 +21,7 @@ class PatientScreen extends StatelessWidget {
         title: Row(
           children: [
             Icon(Icons.accessibility),
-            Text('  '),
+            Text('  Patient'),
           ],
         ),
       ),
@@ -59,7 +61,7 @@ class PatientScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                width: MediaQuery.of(context).size.width * 0.5,
+                                width: MediaQuery.of(context).size.width * 0.4,
                                 child: Text(
                                   '${Provider.of<Data>(context).patients[index]['name']}',
                                   style: TextStyle(fontSize: 30),
@@ -77,56 +79,55 @@ class PatientScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  ReusableCard(
-                    cardChild: Padding(
-                      padding: const EdgeInsets.all(25.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Status: ${Provider.of<Data>(context).patients[index]['status']}',
-                            style: TextStyle(fontSize: 20),
+                  Stack(
+                    children: [
+                      Provider.of<Data>(context).patients[index]['status'] !=
+                              'Normal'
+                          ? LinearProgressIndicator(
+                              backgroundColor: Colors.white,
+                              minHeight: 100,
+                            )
+                          : Container(),
+                      ReusableCard(
+                        cardChild: Padding(
+                          padding: const EdgeInsets.all(25.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Status: ${Provider.of<Data>(context).patients[index]['status']}',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Icon(
+                                Icons.add_alert,
+                                color: Provider.of<Data>(context)
+                                            .patients[index]['status'] ==
+                                        'Normal'
+                                    ? Colors.grey
+                                    : Colors.red,
+                              )
+                            ],
                           ),
-                          Icon(
-                            Icons.add_alert,
-                            color: Provider.of<Data>(context).patients[index]
-                                        ['status'] ==
-                                    'good'
-                                ? Colors.grey
-                                : Colors.red,
-                          )
-                        ],
+                        ),
+                        onPress: null,
                       ),
-                    ),
-                    onPress: null,
+                    ],
                   ),
-
                   Expanded(
                     child: Row(
                       children: [
                         Expanded(
                           child: ReusableCard(
-                            onPress: () {},
-                            cardChild: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/images/ecg.svg',
-                                  semanticsLabel: 'Acme Logo',
-                                  height: 75,
+                            onPress: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return SummaryScreen(index: this.index);
+                                  },
                                 ),
-                                Text(
-                                  'View ECG Data',
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: ReusableCard(
-                            onPress: () {},
+                              );
+                            },
                             cardChild: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -146,7 +147,6 @@ class PatientScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   Expanded(
                     child: Row(
                       children: [
@@ -168,7 +168,7 @@ class PatientScreen extends StatelessWidget {
                                 Icon(
                                   Icons.assignment,
                                   size: 75,
-                                  color: Colors.indigo,
+                                  color: Colors.yellow,
                                   semanticLabel: "Notes",
                                 ),
                                 Text(
@@ -198,7 +198,7 @@ class PatientScreen extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.chat,
-                                  color: Colors.yellow,
+                                  color: Colors.indigo,
                                   size: 75,
                                 ),
                                 Text(
@@ -212,70 +212,6 @@ class PatientScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  // FlatButton(
-
-                  //   onPressed: () {
-
-                  //     showModalBottomSheet<dynamic>(
-
-                  //       isScrollControlled: true,
-
-                  //       context: context,
-
-                  //       builder: (context) => NotesScreen(
-
-                  //         patientID: Provider.of<Data>(context).patients[index]
-
-                  //             ['patientID'],
-
-                  //       ),
-
-                  //     );
-
-                  //   },
-
-                  //   child: Text('View Notes'),
-
-                  //   color: Colors.grey,
-
-                  // ),
-
-                  // IconButton(
-
-                  //   icon: Icon(
-
-                  //     Icons.chat,
-
-                  //     color: Colors.black,
-
-                  //   ),
-
-                  //   onPressed: () {
-
-                  //     Navigator.push(
-
-                  //       context,
-
-                  //       MaterialPageRoute(
-
-                  //         builder: (context) {
-
-                  //           return ChatScreen(
-
-                  //             patientIndex: index,
-
-                  //           );
-
-                  //         },
-
-                  //       ),
-
-                  //     );
-
-                  //   },
-
-                  // ),
                 ],
               ),
             ),

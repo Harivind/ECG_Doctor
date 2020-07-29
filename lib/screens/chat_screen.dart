@@ -63,7 +63,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     FlatButton(
                       onPressed: () {
                         messageTextController.clear();
-
                         _firestore
                             .collection(
                                 '/messages/${Provider.of<Data>(context, listen: false).currentUser.uid}/${Provider.of<Data>(context, listen: false).patients[widget.patientIndex]['patientID']}')
