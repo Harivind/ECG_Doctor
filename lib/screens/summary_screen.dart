@@ -24,12 +24,14 @@ class SummaryScreen extends StatelessWidget {
         builder: (context, snapshot) {
           List docs = [];
           if (snapshot.hasData) {
-            List docs = snapshot.data.documents;
+            docs = snapshot.data.documents;
             docs.sort((a, b) =>
                 int.parse(b.data['dateTime']) - int.parse(a.data['dateTime']));
+            print(docs.length);
+            print('object');
           }
 
-          return docs.length != 0
+          return snapshot.hasData
               ? ListView.builder(
                   itemBuilder: (context, index) {
                     print(docs.length);
@@ -40,16 +42,19 @@ class SummaryScreen extends StatelessWidget {
                       trailing: Icon(Icons.show_chart),
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EcgScreen(doc: docs[index]),
-                            ));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EcgScreen(doc: docs[index]),
+                          ),
+                        );
                       },
                     );
                   },
                   itemCount: docs.length,
                 )
-              : Center(child: Text('ALL Good'));
+              : Center(
+                  child: Text('ALL Good'),
+                );
         },
       ),
     );
